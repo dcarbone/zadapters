@@ -1,5 +1,5 @@
-# zerolog-gocb
-Simple adapter so that Zerolog can be used with GO Couchbase
+# zadapters
+Some simple adapters for Zerolog so it can be used with other packages that might define their own Logger interface
 
 ## Basic Usage
 
