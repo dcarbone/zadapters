@@ -1,13 +1,13 @@
-package zerologgocb
+package zgocbcore
 
 import (
-	"github.com/couchbase/gocb"
+	"github.com/couchbase/gocbcore"
 	"github.com/rs/zerolog"
 )
 
 type (
 	// LevelMap is used to translate GOCB log levels to ZeroLog levels
-	LevelMap map[gocb.LogLevel]zerolog.Level
+	LevelMap map[gocbcore.LogLevel]zerolog.Level
 
 	// Adapter implements gocb.Logger, allowing for a ZeroLog logger to be used.
 	Adapter struct {
@@ -20,13 +20,13 @@ var (
 	// This is the default map that will be used if Adapter is constructed with "NewDefault"
 	// Change as makes sense to your app.
 	DefaultLevelMap = LevelMap{
-		gocb.LogMaxVerbosity: zerolog.Disabled, // this is VERY chatty, only enable if you really mean it
-		gocb.LogSched:        zerolog.Disabled,
-		gocb.LogTrace:        zerolog.Disabled,
-		gocb.LogDebug:        zerolog.DebugLevel,
-		gocb.LogInfo:         zerolog.InfoLevel,
-		gocb.LogWarn:         zerolog.WarnLevel,
-		gocb.LogError:        zerolog.ErrorLevel,
+		gocbcore.LogMaxVerbosity: zerolog.Disabled, // this is VERY chatty, only enable if you really mean it
+		gocbcore.LogSched:        zerolog.Disabled,
+		gocbcore.LogTrace:        zerolog.Disabled,
+		gocbcore.LogDebug:        zerolog.DebugLevel,
+		gocbcore.LogInfo:         zerolog.InfoLevel,
+		gocbcore.LogWarn:         zerolog.WarnLevel,
+		gocbcore.LogError:        zerolog.ErrorLevel,
 	}
 )
 
@@ -48,7 +48,7 @@ func NewDefault(logger zerolog.Logger) *Adapter {
 }
 
 // Log translates the gocb log level to a zerolog event based upon the event map created with the Adapter
-func (a *Adapter) Log(level gocb.LogLevel, offset int, f string, v ...interface{}) error {
+func (a *Adapter) Log(level gocbcore.LogLevel, offset int, f string, v ...interface{}) error {
 	if l, ok := a.lm[level]; ok {
 		switch l {
 		case zerolog.DebugLevel:

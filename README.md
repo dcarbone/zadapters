@@ -1,7 +1,7 @@
 # zadapters
 Some simple adapters for Zerolog so it can be used with other packages that might define their own Logger interface
 
-## Basic Usage
+## Couchbase
 
 ```go
 package main
@@ -9,8 +9,8 @@ package main
 import(
 	"os"
 	
-	"github.com/couchbase/gocb"
-	"github.com/dcarbone/zerolog-gocb"
+	"github.com/couchbase/gocbcore"
+	"github.com/dcarbone/zadapters/zgocbcore"
 	"github.com/rs/zerolog"
 )
 
@@ -22,22 +22,33 @@ func main() {
 		Logger()
 	
 	// create the adapter.
-	adapter := zerologgocb.NewDefault(log)
+	adapter := zgocbcore.NewDefault(log)
 	
 	// set logger
-	gocb.SetLogger(adapter)
+	gocbcore.SetLogger(adapter)
 	
 	// presumably do something
 }
 ```
 
-## LevelMap
+### LevelMap
 
-The [LevelMap](compat.go#L10) maps a `gocb.LogLevel` to a `zerolog.Level`.  If you wish a given
+The [LevelMap](zgocbcore/adapter.go#L10) maps a `gocb.LogLevel` to a `zerolog.Level`.  If you wish a given
 Couchbase log level to be ignored, you may either simply not set it or set it to `zerolog.Disabled`.
 
 
-There is a [DefaultLevelMap](compat.go#L22) that will be used if `nil` is passed as first arg to `New()` or
-if the [Adapter](compat.go#L13) is constructed using [NewDefault()](compat.go#L46)
+There is a [DefaultLevelMap](zgocbcore/adapter.go#L22) that will be used if `nil` is passed as first arg to `New()` or
+if the [Adapter](zgocbcore/adapter.go#L13) is constructed using [NewDefault()](zgocbcore/adapter.go#L46)
 
 And that's pretty much it.
+
+## Generic
+
+Also included is a generic [Adapter](zstdlog/adapter.go) that allows a ZeroLog logger to be used with 
+packages expecting a `*log.Logger` type.
+
+### Leveled Logging
+
+If you wish to have all the output from the Generic adapter to be a specific level, you can specify one
+using [NewWithLevel](zstdlog/adapter.go#L23).  All input to the `Printx` methods will be converted into
+a `Printf` by creating a format string consisting of `%v ` per provided value.
