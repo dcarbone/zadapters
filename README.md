@@ -45,10 +45,31 @@ And that's pretty much it.
 ## Generic
 
 Also included is a generic [Adapter](zstdlog/adapter.go) that allows a ZeroLog logger to be used with 
-packages expecting a `*log.Logger` type.
+packages expecting a `*log.Logger` type.  This will also satisfy those packages who create their own `Logger` interface
+type with the standard `Print`, `Println`, and `Printf` methods on them.
 
-### Leveled Logging
+```go
+package main
 
-If you wish to have all the output from the Generic adapter to be a specific level, you can specify one
-using [NewWithLevel](zstdlog/adapter.go#L23).  All input to the `Printx` methods will be converted into
-a `Printf` by creating a format string consisting of `%v ` per provided value.
+import(
+    "os"
+
+    "github.com/dcarbone/zadapters/zstdlog"
+    "github.com/rs/zerolog"
+)
+
+func main() {
+    // init a logger to use 
+    log := zerolog.New(os.Stdout)
+
+    // creates a *log.Logger with no level prefix
+    stdLogger := zstdlog.NewStdLogger(log)
+    stdLogger.Println("hello world")
+    // results in {"message":"hello world"}
+
+    // creates a *log.Logger with a level prefix
+    stdLeveledLogger := zstdlog.NewStdLoggerWithLevel(log, zerolog.InfoLevel)
+    stdLeveledLogger.Println("hello world")
+    // results in {"level":"info","message":"hello world"}
+}
+```

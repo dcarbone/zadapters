@@ -13,6 +13,21 @@ var (
 	expectedStdLoggerLevel   = []byte("{\"level\":\"info\",\"message\":\"test logger with level\"}\n")
 )
 
+type capture struct {
+	w chan []byte
+}
+
+func newCapture(chlen int) *capture {
+	return &capture{
+		w: make(chan []byte, chlen),
+	}
+}
+
+func (c capture) Write(p []byte) (n int, err error) {
+	c.w <- p
+	return
+}
+
 func TestStdLogger(t *testing.T) {
 	w := newCapture(100)
 

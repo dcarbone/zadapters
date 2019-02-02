@@ -1,38 +1,54 @@
 package zstdlog
 
 import (
-	"strings"
+	stdlog "log"
 
 	"github.com/rs/zerolog"
 )
 
-type (
-	// Adapter is a simple wrapper for a ZeroLog logger that allows it to be passed to things which
-	// expect an instances of log.Logger
-	Adapter struct {
-		l  zerolog.Logger
-		ev *zerolog.Event
+type adapter struct {
+	ev *zerolog.Event
+}
+
+// NewStdLoggerWithLevel will return an instance of *log.Logger where all messages will have the specified level
+func NewStdLoggerWithLevel(logger zerolog.Logger, level zerolog.Level) *stdlog.Logger {
+	return stdlog.New(adapter{logger.WithLevel(level)}, "", 0)
+}
+
+// NewStdLogger will return an instance of *log.Logger where all messages will have no level attached
+func NewStdLogger(logger zerolog.Logger) *stdlog.Logger {
+	return NewStdLoggerWithLevel(logger, zerolog.NoLevel)
+}
+
+func (a adapter) Write(p []byte) (n int, err error) {
+	n = len(p)
+	if n > 0 && p[n-1] == '\n' {
+		p = p[0 : n-1]
 	}
-)
-
-// NewWithLevel will log using the specified level
-func NewWithLevel(logger zerolog.Logger, level zerolog.Level) *Adapter {
-	return &Adapter{l: logger.Level(level), ev: logger.WithLevel(level)}
+	a.ev.Msg(string(p))
+	return
 }
 
-// New constructs a new Adapter with the provided zerolog.Logger as the writer
+// Deprecated
+type Adapter struct {
+	*stdlog.Logger
+}
+
+// Deprecated
 func New(logger zerolog.Logger) *Adapter {
-	return NewWithLevel(logger, zerolog.NoLevel)
+	return &Adapter{NewStdLogger(logger)}
 }
 
-func (a *Adapter) Print(v ...interface{}) {
-	a.ev.Msgf(strings.TrimRight(strings.Repeat("%v ", len(v)), " "), v...)
+// Deprecated
+func NewWithLevel(logger zerolog.Logger, level zerolog.Level) *Adapter {
+	return &Adapter{NewStdLoggerWithLevel(logger, level)}
 }
 
-func (a *Adapter) Println(v ...interface{}) {
-	a.ev.Msgf(strings.TrimRight(strings.Repeat("%v ", len(v)), " ")+"\n", v...)
-}
+// Deprecated
+func (a *Adapter) Print(v ...interface{}) { a.Logger.Print(v...) }
 
-func (a *Adapter) Printf(f string, v ...interface{}) {
-	a.ev.Msgf(f, v...)
-}
+// Deprecated
+func (a *Adapter) Println(v ...interface{}) { a.Logger.Println(v...) }
+
+// Deprecated
+func (a *Adapter) Printf(f string, v ...interface{}) { a.Logger.Printf(f, v...) }
