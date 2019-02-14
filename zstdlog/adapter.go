@@ -7,12 +7,13 @@ import (
 )
 
 type adapter struct {
-	ev *zerolog.Event
+	level zerolog.Level
+	log   zerolog.Logger
 }
 
 // NewStdLoggerWithLevel will return an instance of *log.Logger where all messages will have the specified level
 func NewStdLoggerWithLevel(logger zerolog.Logger, level zerolog.Level) *stdlog.Logger {
-	return stdlog.New(adapter{logger.WithLevel(level)}, "", 0)
+	return stdlog.New(adapter{level, logger}, "", 0)
 }
 
 // NewStdLogger will return an instance of *log.Logger where all messages will have no level attached
@@ -25,8 +26,17 @@ func (a adapter) Write(p []byte) (n int, err error) {
 	if n > 0 && p[n-1] == '\n' {
 		p = p[0 : n-1]
 	}
-	a.ev.Msg(string(p))
+	a.log.WithLevel(a.level).Msg(string(p))
 	return
+}
+
+func (a adapter) WriteLevel(level zerolog.Level, p []byte) (int, error) {
+	n := len(p)
+	if n > 0 && p[n-1] == '\n' {
+		p = p[0 : n-1]
+	}
+	a.log.WithLevel(level).Msg(string(p))
+	return n, nil
 }
 
 // Deprecated
