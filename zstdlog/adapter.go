@@ -11,6 +11,10 @@ type adapter struct {
 	log   zerolog.Logger
 }
 
+var (
+	DefaultLevel = zerolog.NoLevel
+)
+
 // NewStdLoggerWithLevel will return an instance of *log.Logger where all messages will have the specified level
 func NewStdLoggerWithLevel(logger zerolog.Logger, level zerolog.Level) *stdlog.Logger {
 	return stdlog.New(adapter{level, logger}, "", 0)
@@ -18,7 +22,7 @@ func NewStdLoggerWithLevel(logger zerolog.Logger, level zerolog.Level) *stdlog.L
 
 // NewStdLogger will return an instance of *log.Logger where all messages will have no level attached
 func NewStdLogger(logger zerolog.Logger) *stdlog.Logger {
-	return NewStdLoggerWithLevel(logger, zerolog.NoLevel)
+	return NewStdLoggerWithLevel(logger, DefaultLevel)
 }
 
 func (a adapter) Write(p []byte) (n int, err error) {
