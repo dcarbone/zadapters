@@ -9,15 +9,15 @@ type (
 	// LevelMap is used to translate hclog levels to zerolog levels
 	LevelMap map[hclog.Level]zerolog.Level
 
-	// Adapter implements hclog.SinkAdapter
-	Adapter struct {
+	// SinkAdapter implements hclog.SinkAdapter
+	SinkAdapter struct {
 		l  zerolog.Logger
 		lm LevelMap
 	}
 )
 
 var (
-	// DefaultLevelMap is used by any new Adapter that is not provided an explicit map.
+	// DefaultLevelMap is used by any new SinkAdapter that is not provided an explicit map.
 	DefaultLevelMap = LevelMap{
 		hclog.NoLevel: zerolog.NoLevel,
 		hclog.Trace:   zerolog.TraceLevel,
@@ -28,17 +28,21 @@ var (
 	}
 )
 
-func New(levelMap LevelMap, logger zerolog.Logger) *Adapter {
+func NewSink(levelMap LevelMap, logger zerolog.Logger) *SinkAdapter {
 	if levelMap == nil {
 		levelMap = DefaultLevelMap
 	}
-	return &Adapter{
+	return &SinkAdapter{
 		l:  logger,
 		lm: levelMap,
 	}
 }
 
-func (a *Adapter) Accept(name string, level hclog.Level, msg string, args ...interface{}) {
+func NewDefaultSink(logger zerolog.Logger) *SinkAdapter {
+	return NewSink(DefaultLevelMap, logger)
+}
+
+func (a *SinkAdapter) Accept(name string, level hclog.Level, msg string, args ...interface{}) {
 	var (
 		l  zerolog.Level
 		ok bool
