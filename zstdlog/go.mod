@@ -1,5 +1,5 @@
 module github.com/dcarbone/zadapters/zstdlog
 
-go 1.12
+go 1.15
 
-require github.com/rs/zerolog v1.14.3
+require github.com/rs/zerolog v1.20.0

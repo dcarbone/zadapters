@@ -42,27 +42,3 @@ func (a adapter) WriteLevel(level zerolog.Level, p []byte) (int, error) {
 	a.log.WithLevel(level).Msg(string(p))
 	return n, nil
 }
-
-// Deprecated
-type Adapter struct {
-	*stdlog.Logger
-}
-
-// Deprecated
-func New(logger zerolog.Logger) *Adapter {
-	return &Adapter{NewStdLogger(logger)}
-}
-
-// Deprecated
-func NewWithLevel(logger zerolog.Logger, level zerolog.Level) *Adapter {
-	return &Adapter{NewStdLoggerWithLevel(logger, level)}
-}
-
-// Deprecated
-func (a *Adapter) Print(v ...interface{}) { a.Logger.Print(v...) }
-
-// Deprecated
-func (a *Adapter) Println(v ...interface{}) { a.Logger.Println(v...) }
-
-// Deprecated
-func (a *Adapter) Printf(f string, v ...interface{}) { a.Logger.Printf(f, v...) }
