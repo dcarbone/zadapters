@@ -17,12 +17,12 @@ type (
 )
 
 var (
-	// This is the default map that will be used if Adapter is constructed with "NewDefault"
+	// DefaultLevelMap is the default map that will be used if Adapter is constructed with "NewDefault"
 	// Change as makes sense to your app.
 	DefaultLevelMap = LevelMap{
 		gocb.LogMaxVerbosity: zerolog.Disabled, // this is VERY chatty, only enable if you really mean it
 		gocb.LogSched:        zerolog.Disabled,
-		gocb.LogTrace:        zerolog.Disabled,
+		gocb.LogTrace:        zerolog.TraceLevel,
 		gocb.LogDebug:        zerolog.DebugLevel,
 		gocb.LogInfo:         zerolog.InfoLevel,
 		gocb.LogWarn:         zerolog.WarnLevel,
@@ -51,6 +51,8 @@ func NewDefault(logger zerolog.Logger) *Adapter {
 func (a *Adapter) Log(level gocb.LogLevel, offset int, f string, v ...interface{}) error {
 	if l, ok := a.lm[level]; ok {
 		switch l {
+		case zerolog.TraceLevel:
+			a.l.Trace().Msgf(f, v...)
 		case zerolog.DebugLevel:
 			a.l.Debug().Msgf(f, v...)
 		case zerolog.InfoLevel:

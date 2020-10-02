@@ -22,7 +22,7 @@ var (
 	DefaultLevelMap = LevelMap{
 		gocbcore.LogMaxVerbosity: zerolog.Disabled, // this is VERY chatty, only enable if you really mean it
 		gocbcore.LogSched:        zerolog.Disabled,
-		gocbcore.LogTrace:        zerolog.Disabled,
+		gocbcore.LogTrace:        zerolog.TraceLevel,
 		gocbcore.LogDebug:        zerolog.DebugLevel,
 		gocbcore.LogInfo:         zerolog.InfoLevel,
 		gocbcore.LogWarn:         zerolog.WarnLevel,
@@ -48,9 +48,11 @@ func NewDefault(logger zerolog.Logger) *Adapter {
 }
 
 // Log translates the gocb log level to a zerolog event based upon the event map created with the Adapter
-func (a *Adapter) Log(level gocbcore.LogLevel, offset int, f string, v ...interface{}) error {
+func (a *Adapter) Log(level gocbcore.LogLevel, _ int, f string, v ...interface{}) error {
 	if l, ok := a.lm[level]; ok {
 		switch l {
+		case zerolog.TraceLevel:
+			a.l.Trace().Msgf(f, v...)
 		case zerolog.DebugLevel:
 			a.l.Debug().Msgf(f, v...)
 		case zerolog.InfoLevel:
