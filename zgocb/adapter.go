@@ -48,7 +48,7 @@ func NewDefault(logger zerolog.Logger) *Adapter {
 }
 
 // Log translates the gocb log level to a zerolog event based upon the event map created with the Adapter
-func (a *Adapter) Log(level gocb.LogLevel, offset int, f string, v ...interface{}) error {
+func (a *Adapter) Log(level gocb.LogLevel, _ int, f string, v ...interface{}) error {
 	if l, ok := a.lm[level]; ok {
 		switch l {
 		case zerolog.TraceLevel:
