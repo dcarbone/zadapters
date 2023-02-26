@@ -1,4 +1,4 @@
-package zgocbv2
+package zgocb
 
 import (
 	"github.com/couchbase/gocb/v2"
