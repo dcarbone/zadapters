@@ -1,6 +1,10 @@
 version: 2
 updates:
   - package-ecosystem: gomod
-    directory: /
+    directories:
+      - "/zgocb"
+      - "/zgocbcore"
+      - "/zhclog"
+      - "/zstdlog"
     schedule:
       interval: daily
