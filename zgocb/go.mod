@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/couchbase/gocb v1.6.7
-	github.com/rs/zerolog v1.33.0
+	github.com/rs/zerolog v1.34.0
 )
 
 require (
